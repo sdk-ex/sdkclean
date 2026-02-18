@@ -1,0 +1,93 @@
+#!/bin/bash
+
+set -x
+
+APP_NAME="sdkclean"
+SRC_DIR="src"
+BIN_DIR="bin"
+INCLUDE_DIR="include"
+
+# detects compiler version and stores at $CC
+if command -v gcc-12 &> /dev/null; then
+    CC="gcc-12"
+    
+elif command -v gcc &> /dev/null; then
+    CC="gcc"
+    echo "Notice: gcc-12 not found. Falling back to: $CC"    
+else
+    echo "Error: No compiler found (checked gcc-12 and gcc)."
+    exit 1
+fi
+
+
+# Compiler Flags
+# -Wall -Wextra: Show all warnings (Crucial for C)
+# -I: Where to find header files
+CFLAGS="-Wall -Wextra -I$INCLUDE_DIR -g"
+
+# helper function: clean
+clean() {
+    echo "Cleaning build artifacts..."
+    rm -rf "$BIN_DIR"
+}
+
+# helper function build
+build() {
+    mkdir -p "$BIN_DIR"
+
+    # Check for "release" mode argument
+    if [ "$1" == "release" ]; then
+        echo "Building for Release (optimized, no debug symbols)..."
+        CFLAGS="-Wall -Wextra -I$INCLUDE_DIR -O2"
+    fi
+    
+    # Compile all .c files in src/ into one executable
+    # note: For small projects, compiling all at once is faster/easier than linking .o files
+    $CC $CFLAGS $SRC_DIR/*.c -o "$BIN_DIR/$APP_NAME"
+    
+    # Check if gcc succeeded, $? refers to the most recent exit status
+    if [ $? -eq 0 ]; then
+        echo "Build successful: $BIN_DIR/$APP_NAME"
+    else
+        echo "Build FAILED."
+        exit 1
+    fi
+}
+
+# helper function: install
+install() {
+    # Ensure it's built first (force release mode for smaller binary)
+    build release
+    
+    echo "Installing to /usr/local/bin..."
+    # sudo is required here because /usr/local/bin is owned by root
+    if sudo cp "$BIN_DIR/$APP_NAME" "/usr/local/bin/$APP_NAME"; then
+        echo "Success! You can now run '$APP_NAME' from anywhere."
+    else
+        echo "Installation failed (permission denied?)"
+        exit 1
+    fi
+}
+
+# Main Logic
+case "$1" in
+    "clean")
+        clean
+        ;;
+    "run")
+        build
+        echo "Running $APP_NAME..."
+        echo "--------------------------------"
+        ./"$BIN_DIR/$APP_NAME" "${@:2}"
+        ;;
+    "install")
+        install
+        ;;
+    "release")
+        build release
+        ;;
+    *)
+        # Default
+        build
+        ;;
+esac
