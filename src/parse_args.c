@@ -16,8 +16,7 @@ int parse_args(int argc, char* argv[], Appconfig* config) {
     int opt;
     int option_index = 0;
 
-    // We assume config is zeroed by the caller (AppConfig c = {0}).
-    
+    // We assume config is zeroed by the caller (AppConfig c = {0}).    
     // "+cjt:h" -> + enforces Strict POSIX (stops at first non-flag)
     // BUT we abandoned that and are now running "cjt::h"
     while ((opt = getopt_long(argc, argv, "+cjt::hni", long_options, &option_index)) != -1) {
@@ -30,14 +29,19 @@ int parse_args(int argc, char* argv[], Appconfig* config) {
               config->clean_trash = 1;
 
               // If 'optarg' is not NULL, the user provided a path (e.g. -t /tmp)
-              if (optarg) {
+              if (optarg) 
+              {
                   config->trash_path = optarg;
               }
                 break;
                 
-              case 'n': config->dryrun = 1; 
+              case 'n': 
+
+                config->dryrun = 1; 
                 break;
-              case 'i': config->ask = 1;    
+              case 'i': 
+
+                config->ask = 1;    
                 break;
                 
               case 'h':

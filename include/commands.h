@@ -9,6 +9,7 @@
 #define CMD_SUCCESS 0
 #define CMD_FAIL 1
 
+// any additional features may start here as a prototype
 int run_apt(const char* args, void* context);
 int run_trash(const char* path, void* context);
 int run_journal_maint(const char* args, void* context);

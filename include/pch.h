@@ -11,9 +11,13 @@
 #include <sys/wait.h>
 #include <sysexits.h>
 
-#define STATUS_OK  EX_OK         // 0
-#define STATUS_ERR EX_SOFTWARE   // 70 (Internal software error) 
-                                 // OR use EXIT_FAILURE (1) if you prefer generic
+// exit code: 0
+#define STATUS_OK  EX_OK
+// exit code: 70 (internal software error)
+#define STATUS_ERR EX_SOFTWARE 
+
+// exit code 1
+// #define STATUS_ERR (CMD_FAIL, within commands.h ?)
 
 #endif
 

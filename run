@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -x
+# UNCOMMENT FOR DEBUG
+# set -x
 
 APP_NAME="sdkclean"
 SRC_DIR="src"
